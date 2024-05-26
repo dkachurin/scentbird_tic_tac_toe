@@ -1,0 +1,11 @@
+server:
+  port : 8083
+
+spring:
+  application:
+    name: "xogamebot"
+
+game:
+  server:
+#    url: "http://localhost:8080/"
+    url: "http://game-server:8080/"

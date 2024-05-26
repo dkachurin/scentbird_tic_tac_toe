@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - include:
+      file: db/scripts/1-create-room-table.sql
