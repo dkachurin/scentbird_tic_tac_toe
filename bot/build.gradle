@@ -11,7 +11,7 @@ dependencyManagement {
 }
 
 group = 'dkachurin.scentbird'
-version = '27-may-10-39-SNAPSHOT'
+version = '27-may-15-16-SNAPSHOT'
 
 bootJar {
 	mainClass = 'dkachurin.scentbird.xogamebot.XOGameBotApplication'
@@ -30,6 +30,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'org.springframework.cloud:spring-cloud-openfeign-core'
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
 	implementation 'io.github.openfeign:feign-core'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

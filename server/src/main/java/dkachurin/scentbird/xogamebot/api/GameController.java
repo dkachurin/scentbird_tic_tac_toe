@@ -3,6 +3,7 @@ package dkachurin.scentbird.xogamebot.api;
 import dkachurin.scentbird.xogamebot.model.Game;
 import dkachurin.scentbird.xogamebot.model.PlayerActionRequest;
 import dkachurin.scentbird.xogamebot.model.request.FindByIdRequest;
+import dkachurin.scentbird.xogamebot.model.response.GameResponse;
 import dkachurin.scentbird.xogamebot.service.GameService;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class GameController {
 
     @PostMapping("/find")
     @ResponseBody
-    public Game find(@RequestBody final FindByIdRequest param) {
+    public GameResponse find(@RequestBody final FindByIdRequest param) {
         return gameService.findGameByRoomId(UUID.fromString(param.id()));
     }
 

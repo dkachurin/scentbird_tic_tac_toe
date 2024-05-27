@@ -1,8 +1,8 @@
 package dkachurin.scentbird.xogamebot.client;
 
-import dkachurin.scentbird.xogamebot.model.Game;
 import dkachurin.scentbird.xogamebot.model.PlayerActionRequest;
 import dkachurin.scentbird.xogamebot.model.request.FindByIdRequest;
+import dkachurin.scentbird.xogamebot.model.response.GameResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,5 +15,5 @@ public interface GameClient {
     String action(@RequestBody final PlayerActionRequest playerActionRequest);
 
     @RequestMapping(method = RequestMethod.POST, value = "/game/find")
-    Game find(@RequestBody final FindByIdRequest param);
+    GameResponse find(@RequestBody final FindByIdRequest param);
 }

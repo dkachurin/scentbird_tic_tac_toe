@@ -19,12 +19,10 @@ public class GameDAO {
         CellsState cells = CellsUtils.parseCells(rs.getString("cells"));
         UUID roomId = UUID.fromString(rs.getString("room_id"));
         UUID id = UUID.fromString(rs.getString("id"));
-        String msg = CellsUtils.cellsToString(cells) + "; roomId: " + roomId + "; gameId: " + id;
         return new Game(
                 id,
                 roomId,
-                cells,
-                msg
+                cells
         );
     };
 

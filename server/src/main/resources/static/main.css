@@ -17,3 +17,32 @@
     border-top:1px solid #000;
     border-bottom:1px solid #000;
 }
+.available-games-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+.available-games-table th, .available-games-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+}
+
+.available-games-table th {
+    background-color: #f2f2f2;
+}
+
+.available-games-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.available-games-table a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.available-games-table a:hover {
+    text-decoration: underline;
+}

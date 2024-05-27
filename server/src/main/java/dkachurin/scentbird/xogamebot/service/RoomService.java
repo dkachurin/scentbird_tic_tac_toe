@@ -100,16 +100,16 @@ public class RoomService {
 
         //notifications
         if (gameStarted) {
-            gameNotificationService.gameStateUpdated(roomId, room.status(), CellsUtils.emptyCells());
+            gameNotificationService.gameStateUpdated(
+                    roomId,
+                    room.status(),
+                    List.of(),
+                    CellsUtils.emptyCells()
+            );
         }
 
         //response
         return findRoom(roomId);
-    }
-
-    public RoomResponse findRoomByGameId(final UUID gameId) {
-        final Game game = gameService.findGame(gameId);
-        return findRoom(game.roomId());
     }
 
     public RoomsListResponse findRoomsList(final List<RoomStatus> statuses) {

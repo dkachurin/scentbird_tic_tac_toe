@@ -7,7 +7,7 @@ RUN gradle build
 
 # actual container
 FROM amazoncorretto:21
-ENV ARTIFACT_NAME=xogameserver-27-may-10-39-SNAPSHOT.jar
+ENV ARTIFACT_NAME=xogameserver-27-may-15-16-SNAPSHOT.jar
 ENV APP_HOME=/usr/app/
 WORKDIR $APP_HOME
 COPY --from=BUILD $APP_HOME/build/libs/$ARTIFACT_NAME .

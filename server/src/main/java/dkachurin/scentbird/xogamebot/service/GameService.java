@@ -3,6 +3,7 @@ package dkachurin.scentbird.xogamebot.service;
 import dkachurin.scentbird.xogamebot.dao.GameDAO;
 import dkachurin.scentbird.xogamebot.dao.RoomDAO;
 import dkachurin.scentbird.xogamebot.model.CellsState;
+import dkachurin.scentbird.xogamebot.model.CellsWinningState;
 import dkachurin.scentbird.xogamebot.model.Game;
 import dkachurin.scentbird.xogamebot.model.MarkType;
 import dkachurin.scentbird.xogamebot.model.Room;
@@ -10,10 +11,10 @@ import dkachurin.scentbird.xogamebot.model.RoomStatus;
 import dkachurin.scentbird.xogamebot.model.RoomToPlayer;
 import dkachurin.scentbird.xogamebot.model.exception.GameBusinessLogicException;
 import dkachurin.scentbird.xogamebot.model.exception.GameErrorType;
+import dkachurin.scentbird.xogamebot.model.response.GameResponse;
 import dkachurin.scentbird.xogamebot.notification.GameNotificationService;
 import dkachurin.scentbird.xogamebot.utils.CellsUtils;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +39,30 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public Game findGameByRoomId(final UUID roomId) {
-        return gameDAO.findGameByRoomId(roomId);
-    }
-    public Game findGame(final UUID gameId) {
-        return gameDAO.findGame(gameId);
+    public GameResponse findGameByRoomId(final UUID roomId) {
+        final Game game = gameDAO.findGameByRoomId(roomId);
+        if (game == null) {
+            return null;
+        }
+
+        final Room room = roomDAO.findRoom(game.roomId());
+        final CellsWinningState winState = CellsUtils.findWinState(game.cells());
+        final List<RoomToPlayer> roomPlayers = roomDAO.findRoomPlayers(List.of(game.roomId()));
+        final Optional<RoomToPlayer> winnerPlayer = roomPlayers.stream()
+                .filter(it -> it.markType() == winState.winnerMarkType())
+                .findFirst();
+        final String winnerName = winnerPlayer.isPresent()
+                ? winnerPlayer.get().playerId().toString()
+                : "Unknown";
+        return new GameResponse(
+                game.id(),
+                game.roomId(),
+                game.cells(),
+                room.status(),
+                winnerName,
+                winState.winnerMarkType(),
+                winState.winningCells()
+        );
     }
 
     public void createGame(final UUID gameId, final UUID roomId) {
@@ -76,7 +96,7 @@ public class GameService {
                 .filter(it -> it.playerId().equals(playerId))
                 .findAny();
         final CellsState previousState = game.cells();
-        if (findWinner(previousState) != MarkType.NONE) {
+        if (CellsUtils.findWinState(previousState).winnerMarkType() != MarkType.NONE) {
             throw new GameBusinessLogicException(GameErrorType.GAME_ALREADY_FINISHED);
         }
 
@@ -102,60 +122,17 @@ public class GameService {
                 playerInGame.get().markType()
         );
         gameDAO.updateGame(gameId, targetState);
-        if (isGameFinished(targetState)) {
+        if (CellsUtils.isGameFinished(targetState)) {
             roomDAO.updateRoomStatus(game.roomId(), RoomStatus.DONE);
         }
 
         //notify about player action
-        gameNotificationService.gameStateUpdated(room.id(), room.status(), targetState);
+        gameNotificationService.gameStateUpdated(
+                room.id(),
+                room.status(),
+                CellsUtils.findWinState(targetState).winningCells(),
+                targetState
+        );
     }
 
-    private MarkType findWinner(final CellsState state) {
-        final Map<String, MarkType> stateMap = state.state();
-        //vertical
-        for (final String cell : new String[]{"A", "B", "C"}) {
-            final MarkType c1 = stateMap.get(cell + "1");
-            final MarkType c2 = stateMap.get(cell + "2");
-            final MarkType c3 = stateMap.get(cell + "3");
-            if (c1 == c2 && c2 == c3) {
-                return c1;
-            }
-        }
-
-        //horizontal
-        for (final String cell : new String[]{"1", "2", "3"}) {
-            final MarkType c1 = stateMap.get("A" + cell);
-            final MarkType c2 = stateMap.get("B" + cell);
-            final MarkType c3 = stateMap.get("C" + cell);
-            if (c1 == c2 && c2 == c3) {
-                return c1;
-            }
-        }
-
-        { //cross 1
-            final MarkType a1 = stateMap.get("A1");
-            final MarkType b2 = stateMap.get("B2");
-            final MarkType c3 = stateMap.get("C3");
-            if (a1 == b2 && b2 == c3) {
-                return a1;
-            }
-        }
-
-        { //cross 2
-            final MarkType a3 = stateMap.get("A1");
-            final MarkType b2 = stateMap.get("B2");
-            final MarkType c1 = stateMap.get("C3");
-            if (a3 == b2 && b2 == c1) {
-                return a3;
-            }
-        }
-
-        return MarkType.NONE;
-    }
-
-    private boolean isGameFinished(final CellsState state) {
-        return state.state().values()
-                .stream()
-                .noneMatch(cellMarkType -> cellMarkType == MarkType.NONE);
-    }
 }

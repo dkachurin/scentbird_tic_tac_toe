@@ -16,45 +16,51 @@
     </h2>
 </noscript>
 <div id="main-content" class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <label for="connect">WebSocket connection </label>
-                    <button id="connect" class="btn btn-default" type="submit">Connect</button>
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
+    <div id="add-bots-container">
+        <div>Bots </div>
+        <button id="add-one-more-bot" class="btn btn-default" type="button">Add one more bot</button>
+    </div>
+    <div id="errors"></div>
+    <div id="available-games-list"></div>
+    <div id="active-game-container">
+        <div class="row">
+            <div class="col-md-6">
+                <div>
+                    <div>WebSocket connection </div>
+                    <button id="connect" class="btn btn-default" type="button">
+                        Connect
+                    </button>
+                    <button id="disconnect" class="btn btn-default" type="button" disabled="disabled">
+                        Disconnect
                     </button>
                 </div>
-            </form>
+            </div>
+        </div>
+        <br/>
+        <div class="root-content">
+            <div class="col-md-12">
+                <table id="playing-area-cells">
+                    <tbody id="playing-area-table-body">
+                    <tr>
+                        <td id="playing-area-a1" class="big-text square"></td>
+                        <td id="playing-area-a2" class="big-text square v"></td>
+                        <td id="playing-area-a3" class="big-text square"></td>
+                    </tr>
+                    <tr>
+                        <td id="playing-area-b1" class="big-text square h"></td>
+                        <td id="playing-area-b2" class="big-text square v h"></td>
+                        <td id="playing-area-b3" class="big-text square h"></td>
+                    </tr>
+                    <tr>
+                        <td id="playing-area-c1" class="big-text square"></td>
+                        <td id="playing-area-c2" class="big-text square v"></td>
+                        <td id="playing-area-c3" class="big-text square"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-
-    <br/>
-
-    <div class="root-content">
-        <div class="col-md-12">
-            <table id="playing-area-cells">
-                <tbody id="playing-area-table-body">
-                <tr>
-                    <td id="playing-area-a1" class="big-text square"></td>
-                    <td id="playing-area-a2" class="big-text square v"></td>
-                    <td id="playing-area-a3" class="big-text square"></td>
-                </tr>
-                <tr>
-                    <td id="playing-area-b1" class="big-text square h"></td>
-                    <td id="playing-area-b2" class="big-text square v h"></td>
-                    <td id="playing-area-b3" class="big-text square h"></td>
-                </tr>
-                <tr>
-                    <td id="playing-area-c1" class="big-text square"></td>
-                    <td id="playing-area-c2" class="big-text square v"></td>
-                    <td id="playing-area-c3" class="big-text square"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
 </div>
 </body>
 </html>

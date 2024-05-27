@@ -5,6 +5,7 @@ import dkachurin.scentbird.xogamebot.service.PlayerBotService;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +21,7 @@ public class PlayerBotController {
         this.playerBotService = playerBotService;
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/start")
     @ResponseBody
     public OkResponse start() {

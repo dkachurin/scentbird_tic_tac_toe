@@ -2,7 +2,6 @@ package dkachurin.scentbird.xogamebot.service;
 
 import dkachurin.scentbird.xogamebot.client.GameClient;
 import dkachurin.scentbird.xogamebot.client.RoomClient;
-import dkachurin.scentbird.xogamebot.model.Game;
 import dkachurin.scentbird.xogamebot.model.MarkType;
 import dkachurin.scentbird.xogamebot.model.PlayerActionRequest;
 import dkachurin.scentbird.xogamebot.model.RoomStatus;
@@ -10,6 +9,7 @@ import dkachurin.scentbird.xogamebot.model.request.CreateRoomRequest;
 import dkachurin.scentbird.xogamebot.model.request.FindByIdRequest;
 import dkachurin.scentbird.xogamebot.model.request.FindRoomsRequest;
 import dkachurin.scentbird.xogamebot.model.request.JoinRoomRequest;
+import dkachurin.scentbird.xogamebot.model.response.GameResponse;
 import dkachurin.scentbird.xogamebot.model.response.PlayerInGameResponse;
 import dkachurin.scentbird.xogamebot.model.response.RoomResponse;
 import dkachurin.scentbird.xogamebot.model.response.RoomsListResponse;
@@ -77,6 +77,7 @@ public class PlayerBotService {
 
     private void startRobotGame(final UUID roomId, final String secret, final UUID currentPlayerId) {
         robotsExecutorService.submit(() -> {
+            final Random random = new Random();
             final long startedTime = System.currentTimeMillis();
             //5 минут играет, а потом ливает из игры
             final long timePerGameLimitMillis = 5 * 60 * 1000;
@@ -84,30 +85,35 @@ public class PlayerBotService {
             while (startedTime + timePerGameLimitMillis > System.currentTimeMillis()) {
 
                 try {
-                    int random = new Random().nextInt(7000);
+                    int randomInt = random.nextInt(7000);
                     //noinspection BusyWait
-                    Thread.sleep(5_000 + random);
-                    final Game game = gameClient.find(new FindByIdRequest(roomId.toString()));
+                    Thread.sleep(5_000 + randomInt);
+                    final GameResponse game = gameClient.find(new FindByIdRequest(roomId.toString()));
                     if (game == null) {
                         continue;
                     }
+                    if (game.status() == RoomStatus.DONE) {
+                        return;
+                    }
 
                     final Map<String, MarkType> state = game.cells().state();
-                    final Optional<String> playingArea = state.entrySet().stream()
+                    final List<String> availablePlayingAreas = state.entrySet().stream()
                             .filter(it -> it.getValue() == MarkType.NONE)
                             .map(Map.Entry::getKey)
-                            .findAny();
+                            .toList();
 
-                    if (playingArea.isEmpty()) {
+                    if (availablePlayingAreas.size() == 0) {
                         //finish game
                         return;
                     }
+
+                    final String playingArea = availablePlayingAreas.get(random.nextInt(availablePlayingAreas.size()));
 
                     gameClient.action(new PlayerActionRequest(
                             game.id(),
                             secret,
                             currentPlayerId,
-                            playingArea.get()
+                            playingArea
                     ));
                 } catch (final Exception ex) {
                     ex.printStackTrace();
