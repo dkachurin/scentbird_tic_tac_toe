@@ -8,6 +8,7 @@
 - Or run application via `docker compose` and open url in browser manually
 
 #### NOTE
+- If you see error messages in `index.html`, ensure both `server` and `bot` docker containers started. 
 - Solution is not finished yet, it's draft. Must be finished till 1 June 2024.
 
 ### Application logic short description
