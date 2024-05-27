@@ -3,7 +3,6 @@ package dkachurin.scentbird.xogamebot.client;
 import dkachurin.scentbird.xogamebot.model.Game;
 import dkachurin.scentbird.xogamebot.model.PlayerActionRequest;
 import dkachurin.scentbird.xogamebot.model.request.FindByIdRequest;
-import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

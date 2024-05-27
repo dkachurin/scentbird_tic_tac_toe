@@ -5,7 +5,11 @@ plugins {
 }
 
 group = 'dkachurin.scentbird'
-version = '26-may-17-43-SNAPSHOT'
+version = '27-may-10-39-SNAPSHOT'
+
+bootJar {
+	mainClass = 'dkachurin.scentbird.xogamebot.XOGameServerApplication'
+}
 
 java {
 	sourceCompatibility = '21'

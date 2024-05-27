@@ -6,10 +6,7 @@ services:
       - 8080:8080
   bot:
     build: bot/
-    command: startRobotsCount=2
     ports:
       - 8083:8083
     depends_on:
       - game-server
-    environment:
-      - SERVER_URL=http://game-server:8080

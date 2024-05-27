@@ -1,4 +1,15 @@
+# temp container to build using gradle
+FROM gradle:8.7.0 AS BUILD
+WORKDIR /usr/app/
+COPY . .
+RUN gradle build
+
+
+# actual container
 FROM amazoncorretto:21
-VOLUME /dktmp
-COPY build/libs/xogamebot-26-may-17-43-SNAPSHOT.jar xogamebot-26-may-17-43.jar
-ENTRYPOINT ["java","-jar","/xogamebot-26-may-17-43.jar", "game.server.url=${SERVER_URL}"]
+ENV ARTIFACT_NAME=xogamebot-27-may-10-39-SNAPSHOT.jar
+ENV APP_HOME=/usr/app/
+WORKDIR $APP_HOME
+COPY --from=BUILD $APP_HOME/build/libs/$ARTIFACT_NAME .
+EXPOSE 8083
+ENTRYPOINT exec java -jar ${ARTIFACT_NAME} startRobotsCount=6

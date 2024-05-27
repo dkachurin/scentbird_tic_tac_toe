@@ -2,3 +2,6 @@
 /bot/build/
 /server/.gradle/
 /server/build/
+/.idea/
+/bot/bot.iml
+/server/server.iml
