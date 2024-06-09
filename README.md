@@ -9,7 +9,31 @@
 
 #### NOTE
 - If you see error messages in `index.html`, ensure both `server` and `bot` docker containers started. 
-- Solution is not finished yet, it's draft. Must be finished till 1 June 2024.
+- `bot` module is not finished, need to add logs and add unit tests
+
+### Requirements and answers
+- Приложение должно быть разработано на JVM языке.
+  - done: used java 21
+- Можно использовать любые технологии на выбор разработчика.
+  - done: used simple for setup technologies for app  
+- Приложение должно быть разработано с учетом лучших практик написания кода: форматирование, тестирование, комментарии по необходимости.
+  - done: formatted code and add tests in `server` module
+- Соединение между инстансами может быть в любой момент разорвано и восстановлено.
+  - done: client and server modules separated, you can reconnect server WS any time
+- Приложение должно иметь интерфейс (REST или HTML), который позволяет пользователю получить состояние игрового поля в любой момент.
+  - done: simple html UI accessible using `index.html` from `server` app
+- В любой момент оба инстанса должны показывать одинаковое состояние игрового поля или явно указывать что состояние неконсистентно, в независимости от состояния соединения между инстансами.
+  - done: `server` instances are independent, client can show 'not synced' warning if there are connection problems
+- Необходимо предусмотреть задержку, чтобы можно было отслеживать ходы инстансов.
+  - done: `bot` module used random delay to be able to see actions
+- Приложение должно делать ходы в соответствии с правилами.
+  - done: `server` validates action correctness. `bot` also do allowed actions 
+- Приложение не должно позволять другому инстансу совершать ходы не по правилам.
+  - done: `server` validates action correctness.
+- Можно выбрать любую другую пошаговую игру с 2мя или более игроками: морской бой, шахматы, палочки (каждый игрок отнимает из кучи 1,2,3 палочки, кто взял последнюю тот проиграл)
+  - done: not actual for me
+- Алгоритм игры не важен, можно использовать рандомную стратегию. Важно, как происходит синхронизация между инстансами.
+  - done: used random for actions of bots
 
 ### Application logic short description
 
