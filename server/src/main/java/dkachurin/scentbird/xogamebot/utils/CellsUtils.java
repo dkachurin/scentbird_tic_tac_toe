@@ -3,6 +3,7 @@ package dkachurin.scentbird.xogamebot.utils;
 import dkachurin.scentbird.xogamebot.model.CellsState;
 import dkachurin.scentbird.xogamebot.model.CellsWinningState;
 import dkachurin.scentbird.xogamebot.model.MarkType;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.joining;
 
 public class CellsUtils {
+
     //cells = A1=NONE,A2=NONE,...,C3=NONE
 
     private static final String cellsDelimiter = ",";

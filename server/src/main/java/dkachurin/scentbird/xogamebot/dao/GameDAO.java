@@ -41,6 +41,7 @@ public class GameDAO {
                 Map.of("id", gameId, "room_id", roomId, "cells", emptyCells)
         );
     }
+
     public void updateGame(final UUID gameId, final CellsState cells) {
         final String sql = "UPDATE game SET cells = :cells WHERE id = :game_id";
         jdbcTemplate.update(

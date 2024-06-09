@@ -1,9 +1,9 @@
 package dkachurin.scentbird.xogamebot.api;
 
-import dkachurin.scentbird.xogamebot.model.Game;
 import dkachurin.scentbird.xogamebot.model.PlayerActionRequest;
 import dkachurin.scentbird.xogamebot.model.request.FindByIdRequest;
 import dkachurin.scentbird.xogamebot.model.response.GameResponse;
+import dkachurin.scentbird.xogamebot.model.response.OkResponse;
 import dkachurin.scentbird.xogamebot.service.GameService;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +26,14 @@ public class GameController {
 
     @PostMapping("/action")
     @ResponseBody
-    public String action(@RequestBody final PlayerActionRequest playerActionRequest) {
+    public OkResponse action(@RequestBody final PlayerActionRequest playerActionRequest) {
         gameService.processPlayerAction(
                 playerActionRequest.gameId(),
                 playerActionRequest.secret(),
                 playerActionRequest.playerId(),
                 playerActionRequest.playingArea()
         );
-        return "OK";
+        return new OkResponse();
     }
 
     @PostMapping("/find")

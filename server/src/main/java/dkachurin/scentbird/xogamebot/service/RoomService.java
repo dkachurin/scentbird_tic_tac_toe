@@ -1,8 +1,8 @@
 package dkachurin.scentbird.xogamebot.service;
 
 import dkachurin.scentbird.xogamebot.configs.ApplicationProperties;
+import dkachurin.scentbird.xogamebot.notification.GameNotificationService;
 import dkachurin.scentbird.xogamebot.dao.RoomDAO;
-import dkachurin.scentbird.xogamebot.model.Game;
 import dkachurin.scentbird.xogamebot.model.MarkType;
 import dkachurin.scentbird.xogamebot.model.Room;
 import dkachurin.scentbird.xogamebot.model.RoomStatus;
@@ -12,12 +12,12 @@ import dkachurin.scentbird.xogamebot.model.exception.RoomErrorType;
 import dkachurin.scentbird.xogamebot.model.response.PlayerInGameResponse;
 import dkachurin.scentbird.xogamebot.model.response.RoomResponse;
 import dkachurin.scentbird.xogamebot.model.response.RoomsListResponse;
-import dkachurin.scentbird.xogamebot.notification.GameNotificationService;
 import dkachurin.scentbird.xogamebot.utils.CellsUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
