@@ -6,6 +6,7 @@ import dkachurin.scentbird.xogamebot.model.RoomStatus;
 import dkachurin.scentbird.xogamebot.model.RoomToPlayer;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -83,11 +84,11 @@ public class RoomDAO {
     public Room findRoom(final UUID id) {
         final String sql = "SELECT " + roomSelectFields + " FROM room WHERE id = :id";
 
-        return jdbcTemplate.queryForObject(
+        return DataAccessUtils.singleResult(jdbcTemplate.query(
                 sql,
                 Map.of("id", id),
                 roomRowMapper
-        );
+        ));
     }
 
     public List<RoomToPlayer> findRoomPlayers(final List<UUID> roomIds) {

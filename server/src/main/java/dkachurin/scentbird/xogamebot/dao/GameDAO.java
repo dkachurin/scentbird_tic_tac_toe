@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -53,11 +54,11 @@ public class GameDAO {
     public Game findGame(final UUID gameId) {
         final String sql = "SELECT " + gameSelectFields + " FROM game WHERE id = :game_id";
 
-        return jdbcTemplate.queryForObject(
+        return DataAccessUtils.singleResult(jdbcTemplate.query(
                 sql,
                 Map.of("game_id", gameId),
                 gameRowMapper
-        );
+        ));
     }
 
     public Game findGameByRoomId(final UUID roomId) {
