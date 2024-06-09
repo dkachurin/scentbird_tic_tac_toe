@@ -18,12 +18,16 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RoomService {
+    
+    private static final Logger logger = LoggerFactory.getLogger(RoomService.class);
 
     private final RoomDAO roomDAO;
     private final GameService gameService;
@@ -44,42 +48,61 @@ public class RoomService {
     }
 
     private RoomResponse findRoom(final UUID roomId) {
+        logger.info("findRoom: id {}", roomId);
+
         final Room room = roomDAO.findRoom(roomId);
         final List<RoomToPlayer> roomPlayers = roomDAO.findRoomPlayers(List.of(roomId));
+        logger.debug("findRoom: roomPlayers {}", roomPlayers);
         final List<PlayerInGameResponse> playerIds = roomPlayers.stream()
                 .map(it -> new PlayerInGameResponse(it.playerId(), it.markType()))
                 .toList();
-        return RoomResponse.from(room, playerIds);
+
+        final RoomResponse response = RoomResponse.from(room, playerIds);
+        logger.info("findRoom: response {}", response);
+        return response;
     }
 
     @Transactional
     public RoomResponse createRoom(final String title) {
+        logger.info("createRoom: title {}", title);
+        
         { //validations
             final int activeGames = roomDAO.findRoomsCount(RoomStatus.activeStatuses());
-            if (activeGames >= applicationProperties.getActiveGamesLimit()) {
+            final int limit = applicationProperties.getActiveGamesLimit();
+            if (activeGames >= limit) {
+                logger.debug("createRoom: active games count limit. activeGames {}, limit {}", activeGames, limit);
                 throw new RoomBusinessLogicException(RoomErrorType.TO_MANY_ACTIVE_GAMES);
             }
         }
 
         //logic
         final UUID roomId = roomDAO.createRoom(title);
+        logger.debug("createRoom: created room {}", roomId);
 
         //response
-        return findRoom(roomId);
+        final RoomResponse response = findRoom(roomId);
+        logger.info("createRoom: response {}", response);
+        return response;
     }
 
     @Transactional
     public RoomResponse joinRoom(final UUID roomId, final UUID playerId, final MarkType markType) {
+        logger.info("joinRoom: roomId {}, playerId {}, markType {}", roomId, playerId, markType);
+
         final Room room = roomDAO.findRoom(roomId);
         { //validations
             if (room == null) {
+                logger.debug("joinRoom: room null");
                 throw new RoomBusinessLogicException(RoomErrorType.ROOM_NOT_FOUND);
             }
             if (room.status() != RoomStatus.WAITING) {
+                logger.debug("joinRoom: room status not waiting");
                 throw new RoomBusinessLogicException(RoomErrorType.ONLY_ROOMS_IN_WAITING_STATUS_ALLOWED_TO_JOIN);
             }
             final List<RoomToPlayer> roomPlayers = roomDAO.findRoomPlayers(List.of(roomId));
+            logger.debug("joinRoom: roomPlayers {}", roomPlayers);
             if (roomPlayers.size() >= 2) {
+                logger.debug("joinRoom: room players size meet limit. roomPlayers {}, limit {}", roomPlayers.size(), 2);
                 throw new RoomBusinessLogicException(RoomErrorType.ALL_PLAYERS_ALREADY_JOINED);
             }
         }
@@ -88,18 +111,23 @@ public class RoomService {
         final boolean gameStarted;
         { //add player to room
             roomDAO.addPlayerToRoom(roomId, playerId, markType);
+            logger.debug("joinRoom: addPlayerToRoom. roomId {}, playerId {}, markType {}", roomId, playerId, markType);
             final List<RoomToPlayer> roomPlayers = roomDAO.findRoomPlayers(List.of(roomId));
             if (roomPlayers.size() == 2) {
                 roomDAO.updateRoomStatus(roomId, RoomStatus.IN_PROGRESS);
-                gameService.createGame(UUID.randomUUID(), roomId);
+                final UUID gameId = UUID.randomUUID();
+                gameService.createGame(gameId, roomId);
+                logger.debug("joinRoom: start game because all players in game. gameId {}, roomId {}", gameId, roomId);
                 gameStarted = true;
             } else {
+                logger.debug("joinRoom: player added. Waiting for more players to start game");
                 gameStarted = false;
             }
         }
 
         //notifications
         if (gameStarted) {
+            logger.info("joinRoom: send notification. roomId {}", roomId);
             gameNotificationService.gameStateUpdated(
                     roomId,
                     room.status(),
@@ -109,12 +137,17 @@ public class RoomService {
         }
 
         //response
-        return findRoom(roomId);
+        final RoomResponse response = findRoom(roomId);
+        logger.info("joinRoom: response {}", response);
+        return response;
     }
 
     public RoomsListResponse findRoomsList(final List<RoomStatus> statuses) {
+        logger.info("findRoomsList: statuses {}", statuses);
+
         //validate params
         if (statuses.isEmpty()) {
+            logger.debug("findRoomsList: empty statuses");
             return RoomsListResponse.empty();
         }
 
@@ -124,6 +157,7 @@ public class RoomService {
         { //collect information about room players
             final List<UUID> roomIds = roomList.stream().map(Room::id).toList();
             final List<RoomToPlayer> roomPlayers = roomDAO.findRoomPlayers(roomIds);
+            logger.debug("findRoomsList: roomPlayers {}", roomPlayers);
 
             roomIdToPlayerIdsMap = roomPlayers.stream()
                     .collect(Collectors.groupingBy(
@@ -134,9 +168,12 @@ public class RoomService {
                             )
                     ));
         }
+        logger.debug("findRoomsList: roomIdToPlayerIdsMap {}", roomIdToPlayerIdsMap);
 
         //response
-        return RoomsListResponse.from(roomList, roomIdToPlayerIdsMap);
+        final RoomsListResponse response = RoomsListResponse.from(roomList, roomIdToPlayerIdsMap);
+        logger.info("findRoomsList: response {}", response);
+        return response;
     }
 
 }

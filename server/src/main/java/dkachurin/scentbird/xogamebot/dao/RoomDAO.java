@@ -4,16 +4,16 @@ import dkachurin.scentbird.xogamebot.model.MarkType;
 import dkachurin.scentbird.xogamebot.model.Room;
 import dkachurin.scentbird.xogamebot.model.RoomStatus;
 import dkachurin.scentbird.xogamebot.model.RoomToPlayer;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Repository
 public class RoomDAO {
